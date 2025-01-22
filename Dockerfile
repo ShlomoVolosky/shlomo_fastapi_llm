@@ -1,28 +1,36 @@
+# Use the official Python 3.10 slim image as the base
 FROM python:3.10-slim
 
+# Set the working directory in the container to /app
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies required for building Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libssl-dev \
     libffi-dev \
     python3-dev \
     libpq-dev \
-    cargo \ 
+    cargo \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN pip install --no-cache-dir poetry
+# Install Poetry using pip
+RUN pip install -r requirements.txt
 
-# Configure Poetry to avoid virtual environments
+# Configure Poetry to install dependencies globally (no virtual environments)
 RUN poetry config virtualenvs.create false
 
-# Copy project files
+# Copy only the dependency specification files to leverage Docker caching
 COPY pyproject.toml poetry.lock /app/
 
 # Verify Poetry installation
 RUN poetry --version
 
-# Start a shell instead of running poetry install
-CMD ["/bin/bash"]
+# Copy the entire application code into the container
+COPY app /app/app
+
+# (Optional) Expose port 8000 if your application listens on this port
+EXPOSE 8000
+
+# Define the default command to run your application
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
