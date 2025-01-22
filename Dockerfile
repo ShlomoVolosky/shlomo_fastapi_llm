@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry using pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir poetry uvicorn fastapi transformers torch
 
 # Configure Poetry to install dependencies globally (no virtual environments)
 RUN poetry config virtualenvs.create false
@@ -27,10 +27,10 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry --version
 
 # Copy the entire application code into the container
-COPY app /app/app
+COPY . /app/
 
 # (Optional) Expose port 8000 if your application listens on this port
 EXPOSE 8000
 
-# Define the default command to run your application
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Define the default command to launch an interactive shell
+CMD ["/bin/bash"]
