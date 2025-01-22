@@ -1,32 +1,28 @@
-FROM python:3.10-slim 
+FROM python:3.10-slim
 
-WORKDIR /app 
+WORKDIR /app
 
-# Install system dependencies 
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
-    build-essential \ 
-    libssl-dev \ 
-    libffi-dev \ 
-    python3-dev \ 
-    && rm -rf /var/lib/apt/lists/* 
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    libpq-dev \
+    cargo \ 
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry 
-RUN pip install poetry==2.0.1
+# Install Poetry
+RUN pip install --no-cache-dir poetry
 
-# Configure Poetry to avoid virtual environments 
-RUN poetry cache clear . --all
+# Configure Poetry to avoid virtual environments
+RUN poetry config virtualenvs.create false
 
-# Copy dependency files
+# Copy project files
 COPY pyproject.toml poetry.lock /app/
 
-# Debug step to verify files
-RUN ls -la /app/
+# Verify Poetry installation
+RUN poetry --version
 
-
-# Install Python dependencies 
-RUN poetry install
-
-# Copy application code 
-COPY app /app/app 
-
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start a shell instead of running poetry install
+CMD ["/bin/bash"]
