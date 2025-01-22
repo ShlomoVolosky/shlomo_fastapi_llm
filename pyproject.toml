@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gpt-rest-api"
+version = "0.1.0"
+description = "A GPT-Powered REST API with FastAPI"
+authors = ["Shlomo Volosky <shlomoitzjak@gmail.com>"]
+packages = [
+    { include = "app" }  # Include the 'app' directory as a package
+]
+
+[tool.poetry.dependencies]
+python = "^3.12.1"
+fastapi = "^0.115.6"
+uvicorn = "^0.34.0"
+transformers = "^4.48.1"
+torch = "^2.5.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.2"
