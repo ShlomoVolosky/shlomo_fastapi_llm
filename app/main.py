@@ -14,14 +14,14 @@ set_seed(42)
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 
-app.get("/")
+@app.get("/")
 async def root():
     """
     Roor endpoint to provide API information.
     """
     return {"message": "Welcome to the GPT-Powered REST API with FastAPI."}
 
-app.get("/favicon.ico")
+@app.get("/favicon.ico")
 async def favicon():
     """
     Handle requests for the favicon to avoid unnecessary 404s.
